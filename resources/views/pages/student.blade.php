@@ -25,8 +25,18 @@ tr:nth-child(even) {
 </style>
 
 <a href="/addstudent"><button>  Add Student </button></a>
+<br />
+<br />
+<form action="{{ route('student') }}" method="GET">
+    <input type="text" name="search" required/>
+    <button type="submit">Search</button>
+</form>
 
-<h2>Student List</h2>
+
+@if($posts->isNotEmpty())
+
+        <div class="post-list">
+         <h2>Student List</h2>
 
 <table>
   <tr>
@@ -35,19 +45,33 @@ tr:nth-child(even) {
     <th>Age</th>
     <th>Gender</th>
     <th>Address</th>
+    <th></th>
+    <th></th>
   </tr>
   
-    @foreach($student as $stu)
+    @foreach($posts as $stu)
     <tr>
     <td>{{$stu->name}}</td>
     <td>{{$stu->department}}</td>
     <td>{{$stu->age}}</td>
     <td>{{$stu->gender}}</td>
     <td>{{$stu->address}}</td>
+    <td><a href="{{ route('studentshow',
+                  ['id'=>$stu->id]) }}"><button>Edit</button></a></td>
+    <td><a href="{{ route('studentdelete',
+                  ['id'=>$stu->id]) }}"><button style="background: darkred;">Delete</button></a></td>
     </tr>
      @endforeach
   
   
 </table>
+        </div>
+@else 
+    <div>
+        <h2>No posts found</h2>
+    </div>
+@endif
+
+
     
        @stop 

@@ -75,10 +75,21 @@ class StudentController extends Controller
         $user->save();
        return view('pages/login' , $data);
     }
-       function student()
+       function student(Request $request)
     {
          $data['page_title'] = "Student";
-       $data["student"] = student::join('departments','student.department','=','departments.id')->select('student.name as name','departments.name as department','age','gender','address')->get();
+       $data["student"] = student::join('departments','student.department','=','departments.id')->select('student.name as name','departments.name as department','age','gender','address','student.id')->get();
+        $search= $request->input('search');
+
+    // Search in the title and body columns from the posts table
+    $data['posts'] = Student::query()
+        ->where('student.name', 'LIKE', "%{$search}%")
+        ->orWhere('age', 'LIKE', "%{$search}%")
+         ->orWhere('departments.name', 'LIKE', "%{$search}%")
+          ->orWhere('gender', 'LIKE', "%{$search}%")
+           ->orWhere('address', 'LIKE', "%{$search}%")
+        ->join('departments','student.department','=','departments.id')->select('student.name as name','departments.name as department','age','gender','address','student.id')
+        ->get();
 
          return view('pages.student', $data);
         // return $data;
@@ -111,7 +122,7 @@ class StudentController extends Controller
 
         ]);
         $student->save();
-         $data["student"] = student::join('departments','student.department','=','departments.id')->select('student.name as name','departments.name as department','age','gender','address')->get();
+         $data["student"] = student::join('departments','student.department','=','departments.id')->select('student.name as name','departments.name as department','age','gender','address','student.id')->get();
        
        return view('pages/student', $data);
     }
@@ -134,6 +145,55 @@ class StudentController extends Controller
          $data["department"] = Department::select('id','name')->get();
        return view('pages/department',$data);
     }
+
+     function studentshow(Request $request)
+    {
+         $data['page_title'] = "Student";
+        $data['student'] = Student::where("student.id",$request->id)->join('departments','student.department','=','departments.id')->select('student.name as name','departments.name as department','age','gender','address','student.id')->first();
+         $data["department"] = Department::select('id','name')->get();
+         return view('pages/studentedit',$data);
+    }
+
+    function studentedit(Request $request)
+    {
+        $data['page_title'] = "Student";
+         $data["student"] = student::join('departments','student.department','=','departments.id')->select('student.name as name','departments.name as department','age','gender','address','student.id')->get();
+         $Student = Student::find($request->id);
+         $Student->name=$request->name;
+           $Student->department=$request->department;
+            $Student->age=$request->age;
+            $Student->gender=$request->gender;
+             $Student->address=$request->address;
+        $Student->update();
+      
+        return view('pages/student',$data);
+    }
     
+
+    function departmentshow(Request $request)
+    {
+         $data['page_title'] = "Department";
+        $data['department'] = Department::find($request->id);
+         return view('pages/departmentedit',$data);
+    }
+    function departmentedit(Request $request)
+    {
+         $data['page_title'] = "Department";
+         $Department = Department::find($request->id);
+        $Department->name= $request->name;
+        $Department->save();
+         $data["department"] = Department::select('id','name')->get();
+        return view('pages/department',$data);
+    }
+    function studentdelete(Request $request)
+    {
+         $Student = Student::find($request->id);
+         $Student->delete();
+         return redirect('/student');
+    }
    
 }
+     
+    
+   
+

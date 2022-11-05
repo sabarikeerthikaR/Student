@@ -26,25 +26,25 @@ tr:nth-child(even) {
 
 <a href="/adddepartment"><button>Add Department</button></a>
 
-<h2>Department List</h2>
+<h2>Department Edit</h2>
 
 <table>
   <tr>
-    <th>Id</th>
     <th>Department</th>
     <th></th>
   </tr>
-  <?php $i=1; ?>
-    @foreach($department as $dep)
+ 
     <tr>
-    <td>{{$i}}</td>
-    <td>{{$dep->name}}</td>
-    <td><a href="{{ route('departmentshow',
-                  ['id'=>$dep->id]) }}"><button>Edit</button></a></td>
-   
+    	<form method="post" action="{{ route('departmentedit',
+                  ['id'=>$department->id]) }}">
+    		 {{ csrf_field()}}
+    <td>{{$department->name}}<input class="form-control" type="text" name="name" value="{{$department->name}}" /></td>
+    <td><div class="form-group">
+     <input type="submit" name="Submit" class="btn btn-primary" value="Submit" />
+    </div></td>
+</form>
     </tr>
-    <?php $i++  ?>
-     @endforeach
+    
   
   
 </table>
